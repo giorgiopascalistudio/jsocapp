@@ -1,0 +1,68 @@
+{
+  "rules": {
+
+    "//": "── JSOC Security Rules ─────────────────────────────────────────",
+    "//1": "Solo utenti autenticati possono leggere/scrivere.",
+    "//2": "Un utente può modificare SOLO il proprio profilo e la propria posizione.",
+    "//3": "Solo i membri della squadra possono leggere/scrivere i dati della squadra.",
+
+    "users": {
+      "$uid": {
+        ".read":  "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "codes": {
+      "//": "Codici invito squadra — lookup pubblico per gli autenticati",
+      ".read":  "auth != null",
+      "$code": {
+        ".write": "auth != null && (!data.exists() || data.child('squadId').val() === newData.child('squadId').val())"
+      }
+    },
+
+    "squads": {
+      "$sid": {
+        "//": "Tutti gli autenticati possono leggere info squadra (per il flow di join via codice)",
+        ".read":  "auth != null",
+
+        "info": {
+          ".write": "auth != null && (!data.exists() || data.child('leaderUid').val() === auth.uid)"
+        },
+
+        "members": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+
+        "players": {
+          "//": "Posizione live — solo l'utente può scrivere il suo nodo, e solo se è membro della squadra",
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && root.child('squads').child($sid).child('members').child($uid).exists()"
+          }
+        },
+
+        "elements": {
+          "//": "Marker, cerchi, rette, GPX — chi è membro può creare; solo l'autore può modificare/eliminare",
+          "$eid": {
+            ".write": "auth != null && root.child('squads').child($sid).child('members').child(auth.uid).exists() && (!data.exists() || data.child('uid').val() === auth.uid || newData.child('uid').val() === auth.uid)"
+          }
+        },
+
+        "chat": {
+          "//": "Chat append-only: un messaggio non è modificabile dopo l'invio",
+          "$mid": {
+            ".write": "auth != null && root.child('squads').child($sid).child('members').child(auth.uid).exists() && !data.exists() && newData.child('uid').val() === auth.uid && newData.child('text').isString() && newData.child('text').val().length <= 200"
+          }
+        }
+      }
+    },
+
+    "jsoc": {
+      "//": "Vecchio path legacy (mappa pre-account). Lascia disabilitato in produzione.",
+      ".read": false,
+      ".write": false
+    }
+  }
+}
