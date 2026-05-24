@@ -296,7 +296,7 @@
 </div>
 
 <!-- ═══════ HOME ═══════ -->
-<div id="homePage" class="page active">
+<div id="homePage" class="page">
     <div class="home-squad" id="homeSquadInfo">SQUADRA: <b id="homeSquadName">—</b></div>
     <div class="home-account" onclick="showPage('profilePage')">
         <span class="home-account-role" id="homeAccountRole">👤</span>
@@ -2361,7 +2361,7 @@ input[type="file"].sb-file::file-selector-button{
 #tacMap.click-mode{cursor:crosshair;}
 </style>
 
-<div id="mapPage" class="page">
+<div id="mapPage" class="page active">
     <div id="tacMap"></div>
 
     <!-- Setup squadra mancante -->
@@ -3313,11 +3313,12 @@ function mapMeIcon(color, heading) {
             font-size:9px;font-weight:bold;letter-spacing:1px;padding:1px 5px;border-radius:3px;
             white-space:nowrap;border:1px solid ${color};line-height:1.3;display:flex;align-items:center;gap:2px;">
             ${roleEmo ? `<span style="font-size:10px;">${roleEmo}</span>` : ''}${mapMe.callsign}</div>
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" style="overflow:visible;">
-            <g transform="rotate(${heading},14,14)" style="transform-origin:14px 14px;transition:transform 0.25s ease-out;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+            <g transform="rotate(${Math.round(heading)},14,14)">
                 <polygon points="14,2 19,24 14,19 9,24" fill="${color}" stroke="#000" stroke-width="2"/>
                 <circle cx="14" cy="14" r="3" fill="#000"/>
-            </g></svg>
+            </g>
+        </svg>
     </div>`;
     return L.divIcon({ html:svg, className:'', iconSize:[28,44], iconAnchor:[14,38] });
 }
