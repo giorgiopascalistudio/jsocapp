@@ -284,7 +284,7 @@
 <div id="authOverlay">
     <div class="auth-logo">JSOC</div>
     <div class="auth-sub">Tactical Operations Suite</div>
-    <div class="auth-box">
+    <div class="auth-box" id="authBoxLogin" style="display:none;">
         <div class="auth-title">⊕ ACCESSO OPERATORE</div>
         <div class="auth-desc">Autenticazione richiesta per accedere alla rete tattica condivisa.</div>
         <button class="google-btn" id="googleSignInBtn" onclick="authSignInGoogle()">
@@ -292,6 +292,11 @@
             ACCEDI CON GOOGLE
         </button>
         <div id="authStatus" class="auth-status">Pronto.</div>
+    </div>
+    <!-- Loading screen (default) -->
+    <div id="authBoxLoading">
+        <div style="font-family:'Share Tech Mono',monospace;color:var(--acc);font-size:.75rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;">INIZIALIZZAZIONE...</div>
+        <div style="font-family:'Share Tech Mono',monospace;color:var(--tx3);font-size:.6rem;letter-spacing:2px;">CONNESSIONE SECURE-NET IN CORSO</div>
     </div>
 </div>
 
@@ -3780,11 +3785,16 @@ function authOnReady() {
 }
 
 function _showAuth() {
+    // Nasconde loading, mostra form login
+    const loading = document.getElementById('authBoxLoading');
+    const login   = document.getElementById('authBoxLogin');
+    if (loading) loading.style.display = 'none';
+    if (login)   login.style.display   = 'block';
     document.getElementById('authOverlay').classList.remove('hidden');
 }
 function _showApp() {
     document.getElementById('authOverlay').classList.add('hidden');
-    _updateHomeAccountBar();
+    try { _updateHomeAccountBar(); } catch(e) {}
 }
 
 function _updateHomeAccountBar() {
